@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Список задач (SSR)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 30px auto; padding: 0 16px; }
+    h1 { margin-bottom: 8px; }
+    .filters a { margin-right: 10px; padding: 4px 10px; border-radius: 6px;
+                 text-decoration: none; color: #333; background: #eee; }
+    .filters a.active { background: #333; color: #fff; }
+    form { display: inline; }
+    input, select, button { padding: 6px 8px; font-size: 14px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 14px;
+            margin-bottom: 12px; background: #fafafa; }
+    .card h3 { margin: 0 0 6px; }
+    .meta { color: #666; font-size: 13px; margin-bottom: 8px; }
+    .status-new        { color: #b58900; }
+    .status-in_progress{ color: #268bd2; }
+    .status-done       { color: #859900; }
+    .files-list { margin: 6px 0 0; padding-left: 20px; font-size: 13px; }
+    .add-form { background: #f0f4ff; padding: 14px; border-radius: 8px;
+                margin-bottom: 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .inline { display: inline-flex; gap: 6px; align-items: center; margin-right: 8px; }
+    .danger { background: #ffe0e0; }
+  </style>
+</head>
+<body>
+
+<h1>Список задач</h1>
+
+<!-- Фильтры -->
+<div class="filters">
+  <% statuses.forEach(s => { %>
+    <a href="/?status=<%= s.value %>"
+       class="<%= filter === s.value ? 'active' : '' %>">
+      <%= s.label %>
+    </a>
+  <% }) %>
+</div>
+
+<!-- Форма добавления -->
+<form action="/tasks" method="POST" class="add-form">
+  <input type="text" name="title" placeholder="Название задачи" required />
+  <select name="status">
+    <option value="new">Новая</option>
+    <option value="in_progress">В работе</option>
+    <option value="done">Завершена</option>
+  </select>
+  <input type="date" name="dueDate" />
+  <button type="submit">Добавить</button>
+</form>
+
+<!-- Список задач -->
+<% if (tasks.length === 0) { %>
+  <p>Задач пока нет.</p>
+<% } %>
+
+<% tasks.forEach(task => { %>
+  <%- include('partials/task', { task }) %>
+<% }) %>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Сделать лабораторную №1",
+    "status": "in_progress",
+    "dueDate": "2025-12-01",
+    "files": []
+  },
+  {
+    "id": 2,
+    "title": "Прочитать документацию Express",
+    "status": "done",
+    "dueDate": "2025-11-20",
+    "files": [
+      {
+        "originalName": "mmo_lab2.pdf",
+        "storedName": "1790784570779-788064570-mmo_lab2.pdf",
+        "uploadedAt": "2026-09-30T16:09:30.784Z"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "a4xtycukvi",
+    "status": "new",
+    "dueDate": "2026-10-22",
+    "files": []
+  }
+]

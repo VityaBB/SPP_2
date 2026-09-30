@@ -1,0 +1,48 @@
+<div class="card">
+  <h3><%= task.title %></h3>
+  <div class="meta">
+    Статус:
+    <span class="status-<%= task.status %>">
+      <%= task.status === 'new' ? 'Новая'
+         : task.status === 'in_progress' ? 'В работе'
+         : 'Завершена' %>
+    </span>
+    &nbsp;|&nbsp;
+    Ожидаемое завершение: <%= task.dueDate || '—' %>
+  </div>
+
+  <!-- Смена статуса -->
+  <form action="/tasks/<%= task.id %>/status" method="POST" class="inline">
+    <select name="status">
+      <option value="new"         <%= task.status === 'new' ? 'selected' : '' %>>Новая</option>
+      <option value="in_progress" <%= task.status === 'in_progress' ? 'selected' : '' %>>В работе</option>
+      <option value="done"        <%= task.status === 'done' ? 'selected' : '' %>>Завершена</option>
+    </select>
+    <button type="submit">Изменить</button>
+  </form>
+
+  <!-- Прикрепить файл -->
+  <form action="/tasks/<%= task.id %>/files" method="POST"
+        enctype="multipart/form-data" class="inline">
+    <input type="file" name="file" required />
+    <button type="submit">Загрузить</button>
+  </form>
+
+  <!-- Удалить -->
+  <form action="/tasks/<%= task.id %>/delete" method="POST" class="inline">
+    <button type="submit" class="danger">Удалить</button>
+  </form>
+
+  <!-- Список файлов -->
+  <% if (task.files && task.files.length) { %>
+    <ul class="files-list">
+      <% task.files.forEach(f => { %>
+        <li>
+          <a href="/uploads/<%= f.storedName %>" target="_blank">
+            <%= f.originalName %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>

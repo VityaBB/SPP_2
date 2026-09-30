@@ -1,0 +1,7 @@
+lab1/node_modules/
+lab1/data/uploads/*
+!lab1/data/uploads/.gitkeep
+cours/
+*.log
+.env
+.DS_Store
