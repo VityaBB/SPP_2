@@ -1,0 +1,62 @@
+name: lab3
+
+services:
+  api:
+    build:
+      context: ./server
+    container_name: lab3-api
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATA_DIR: /app/data
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE: "10485760"
+      APP_ORIGIN: "http://localhost:${WEB_PORT:-3000}"
+      COOKIE_SECURE: "false"
+      SEED_DEMO_USERS: "true"
+      SMTP_HOST: mailhog
+      SMTP_PORT: "1025"
+      MAIL_FROM: "Список задач <no-reply@lab3.local>"
+      LOG_LEVEL: "info"
+    volumes:
+      - lab3-data:/app/data
+      - lab3-uploads:/app/uploads
+    depends_on:
+      mailhog:
+        condition: service_started
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./client
+    container_name: lab3-web
+    ports:
+      - "${WEB_PORT:-3000}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Почтовый сервер для восстановления доступа. Веб-интерфейс: http://localhost:8025
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: lab3-mailhog
+    ports:
+      - "${MAILHOG_PORT:-8025}:8025"
+    restart: unless-stopped
+
+volumes:
+  lab3-data:
+  lab3-uploads:

@@ -5,3 +5,7 @@ cours/
 *.log
 .env
 .DS_Store
+
+lab2/server/node_modules/
+lab2/server/data/
+lab2/server/uploads/

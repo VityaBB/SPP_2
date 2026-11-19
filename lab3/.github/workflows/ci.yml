@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Линтер и тесты
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Установка зависимостей
+        run: npm ci
+
+      - name: Проверка стиля кода
+        run: npm run lint
+
+      - name: Тесты API
+        run: npm test
+
+  docker:
+    name: Сборка контейнеров
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Сборка Docker-образов
+        run: docker compose build

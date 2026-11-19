@@ -1,0 +1,44 @@
+name: lab2
+
+services:
+  api:
+    build:
+      context: ./server
+    container_name: lab2-api
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATA_DIR: /app/data
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE: "10485760"
+    volumes:
+      - lab2-data:/app/data
+      - lab2-uploads:/app/uploads
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./client
+    container_name: lab2-web
+    ports:
+      - "${WEB_PORT:-3000}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  lab2-data:
+  lab2-uploads:
